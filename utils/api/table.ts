@@ -39,7 +39,7 @@ export async function getTableData(
   pageNumber: number
 ): Promise<PagedResponse<TablePageData>> {
   const res = await fetch(
-    `${API_ROOT_URL}/files/${fileName}/table?co_occ=2000&sort_method=position&page=${pageNumber}`
+    `${API_ROOT_URL}/table-view/table/?file_name=${fileName}&co_occ=2000&sort_method=position&page=${pageNumber}`
   );
   const responseJSON = await res.json();
   return { data: parseAPITableData(responseJSON), pageNumber };

@@ -8,11 +8,10 @@ import { API_ROOT_URL } from "./constants";
 export async function getLanguageMenuData(
   language: SourceLanguage
 ): Promise<DatabaseText[]> {
-  const res = await fetch(`${API_ROOT_URL}/menus/${language}`);
+  const res = await fetch(`${API_ROOT_URL}/menus/files/?language=${language}`);
   const response = await res.json();
-
   // TODO: Add pagination on BE
-  return response.result.map((menuItem: ApiLanguageMenuData) => ({
+  return response.results.map((menuItem: ApiLanguageMenuData) => ({
     label: menuItem.search_field,
     id: menuItem.search_field,
     name: menuItem.displayName,
