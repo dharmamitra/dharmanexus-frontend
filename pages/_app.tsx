@@ -22,6 +22,7 @@ import queryString from "query-string";
 import { QueryParamProvider } from "use-query-params";
 import createEmotionCache from "utils/createEmotionCache";
 import { MUIThemeProvider } from "utils/MUIThemeProvider";
+import { OpenAPI } from "@api/client";
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
@@ -35,6 +36,8 @@ if (process.env.NODE_ENV !== "production") {
     applyClientHMR(() => i18n);
   }
 }
+
+OpenAPI.BASE = process.env.NEXT_PUBLIC_API_URL ?? "";
 
 interface MyAppProps extends AppProps {
   emotionCache: EmotionCache;

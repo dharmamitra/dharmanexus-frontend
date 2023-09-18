@@ -1,8 +1,7 @@
 import queryString from "query-string";
 import type { InfiniteFilePropApiQuery, PagedResponse } from "types/api/common";
 import type { ApiTablePageData, TablePageData } from "types/api/table";
-
-import { API_ROOT_URL } from "./constants";
+import { DefaultService } from "@api/client";
 
 function parseAPITableData(apiData: ApiTablePageData): TablePageData {
   return apiData.map((p) => ({
@@ -40,11 +39,12 @@ export async function getTableData({
   queryParams,
   pageNumber,
 }: InfiniteFilePropApiQuery): Promise<PagedResponse<TablePageData>> {
-  const res = await fetch(
-    `${API_ROOT_URL}/table-view/table?file_name=${fileName}&page=${pageNumber}&${queryString.stringify(
-      queryParams
-    )}`
-  );
-  const responseJSON = await res.json();
-  return { data: parseAPITableData(responseJSON), pageNumber };
+  const response = await DefaultService.getTableViewTableViewTablePost({
+    file_name: fileName,
+    page: pageNumber,
+    ...queryParams,
+    limits: {},
+  });
+
+  return { data: parseAPITableData(response), pageNumber };
 }
