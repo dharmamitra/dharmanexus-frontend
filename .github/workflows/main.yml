@@ -1,19 +1,95 @@
 name: CI
 on:
   pull_request:
-  push:
+  # push:
 jobs:
-  build:
+  install:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/setup-node@v3
         with:
           node-version: "18"
           cache: "yarn"
+
       - name: Install modules
         run: yarn
+
       - name: Run TypeScript compiler
         run: tsc
+
       - name: Run ESLint
         run: yarn eslint .
+
+  build-and-test:
+    runs-on: ubuntu-latest
+    needs: install
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+          cache: "yarn"
+
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
+        with:
+          build: yarn build:skip
+          start: yarn start
+          browser: chrome
+        
+      - name: Find and rename screenshots
+        id: list
+        if: failure()
+        run: |
+          imgs=$(find cypress/results/screenshots -type f -name '*.png' | xargs)
+          renamed_imgs=($(for i in "${!imgs[@]}"; do echo "$(echo ${imgs[$i]} | sed "s/\/.*.png/\/results\/screenshots\/screenshot${i+1}.png/")"; done))
+          echo "Cypress Screenshots:"
+          for i in "${!imgs[@]}"; do 
+            mv "${imgs[$i]}" "${renamed_imgs[$i]}"; 
+            echo "${imgs[$i]}  >>>   ${renamed_imgs[$i]}"; 
+          done
+
+      - name: Set up git
+        if: failure()
+        run: |
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Action"
+
+      - name: Checkout new branch
+        if: failure()
+        run: |
+          git checkout -b pr-actions-${{ github.event.pull_request.number }}
+      
+      - name: Commit screenshots
+        if: failure()
+        run: |
+          git add cypress/results/screenshots/*.png
+          git commit -m "Add screenshots"   
+
+      - name: Push changes
+        if: failure()
+        run: |
+          git push origin pr-actions-${{ github.event.pull_request.number }}
+        
+      - name: Create comment with screenshots
+        if: failure()
+        uses: actions/github-script@v5
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            const screenshotsDir = 'cypress/results/screenshots';
+            const screenshots = fs.readdirSync(screenshotsDir).map(file => {
+              const filePath = path.join(screenshotsDir, file);
+              const url = `https://raw.githubusercontent.com/${process.env.GITHUB_REPOSITORY}/pr-actions-${context.issue.number}/${filePath}`;
+              return `![${file}](${url})`;
+            });
+            const body = `## Cypress Screenshots\n\n${screenshots.join('\n')}`;
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });
+

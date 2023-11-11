@@ -30,15 +30,12 @@ export default function LocaleSelector() {
     <div>
       <Button
         id="basic-button"
-        variant="outlined"
+        variant="text"
         color="inherit"
-        sx={{
-          borderColor: (theme) =>
-            theme.palette.mode === "dark" ? "#555" : "primary.light",
-        }}
         aria-controls={isOpen ? "language-menu" : undefined}
         aria-haspopup="true"
         aria-expanded={isOpen ? "true" : undefined}
+        data-testid="locale-button"
         onClick={handleClick}
       >
         <LanguageIcon sx={{ fontSize: 24, mr: 1 }} color="inherit" />
@@ -58,19 +55,20 @@ export default function LocaleSelector() {
         onClose={handleClose}
       >
         {Object.entries(SUPPORTED_LOCALES).map(([localeCode, localeName]) => {
+          const isSelected = localeCode === currentLocale;
           return (
             <MenuItem
               key={localeCode}
               value={localeCode}
               lang={localeCode}
+              data-testid="locale-menu-item"
+              data-locale-selected={isSelected}
               onClick={() =>
                 handleLanguageChange(localeCode as SupportedLocale)
               }
             >
               {localeName}
-              {currentLocale === localeCode && (
-                <CheckIcon sx={{ ml: 2 }} color="primary" />
-              )}
+              {isSelected && <CheckIcon sx={{ ml: 2 }} color="primary" />}
             </MenuItem>
           );
         })}

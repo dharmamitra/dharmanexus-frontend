@@ -1,8 +1,14 @@
 import { type FC, type PropsWithChildren, useEffect, useRef } from "react";
 import { useSettingsDrawer } from "@components/hooks/useSettingsDrawer";
 import type { SxProps } from "@mui/material";
-import { Container, useMediaQuery, useTheme } from "@mui/material";
+import {
+  Container,
+  Typography,
+  useMediaQuery,
+  useTheme as useMaterialTheme,
+} from "@mui/material";
 import type { Breakpoint } from "@mui/system";
+import { visuallyHidden } from "@mui/utils";
 import { Main } from "features/sidebarSuite/common/MuiStyledSidebarComponents";
 import { SidebarSuite } from "features/sidebarSuite/SidebarSuite";
 
@@ -16,8 +22,8 @@ export const QueryResultsPageContent: FC<Props> = ({
   containerStyles,
 }) => {
   const isInitialized = useRef(false);
-  const theme = useTheme();
-  const isLg = useMediaQuery(theme.breakpoints.up("lg"), {
+  const materialTheme = useMaterialTheme();
+  const isLg = useMediaQuery(materialTheme.breakpoints.up("lg"), {
     noSsr: true,
   });
 
@@ -40,7 +46,11 @@ export const QueryResultsPageContent: FC<Props> = ({
           <SidebarSuite />
         </Main>
       ) : (
-        <main style={{ height: "100%" }} />
+        <main style={{ height: "100%" }}>
+          <Typography component="h1" sx={visuallyHidden}>
+            Loading...
+          </Typography>
+        </main>
       )}
     </>
   );
