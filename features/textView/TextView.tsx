@@ -28,10 +28,7 @@ export default function TextView({
   const { mode } = useColorScheme();
   const isDarkTheme = mode === "dark";
 
-  const [
-    selectedSegmentId,
-    // setSelectedSegmentId
-  ] = useQueryParam("selectedSegment");
+  const [selectedSegmentId] = useQueryParam("selectedSegment");
 
   const colorScale = useMemo(() => {
     const colors = data.map((item) => item.segmentText[0]?.highlightColor ?? 0);
@@ -41,7 +38,7 @@ export default function TextView({
       chroma
         .scale("Reds")
         .correctLightness(true)
-        .padding(isDarkTheme ? [0, 0.4] : [0.4, 0])
+        .padding(isDarkTheme ? [0, 0.3] : [0.3, 0])
         // small trick to make it readable in both color schemes
         .domain(isDarkTheme ? [minColor, maxColor] : [maxColor, minColor])
     );
@@ -50,19 +47,15 @@ export default function TextView({
   const hasData = data.length > 0;
 
   return (
-    <Paper elevation={1} sx={{ flex: 1, py: 2, pl: 2, my: 1 }}>
-      <Allotment>
-        {/* Left view - text (main view) */}
+    <Paper sx={{ flex: 1, py: 1, pl: 2, my: 1 }}>
+      <Allotment defaultSizes={[4, 3]}>
+        {/* Left pane - text (main view) */}
         <Allotment.Pane>
           <Virtuoso
             totalCount={data.length}
             data={hasData ? data : undefined}
-            itemContent={(index, dataSegment) => (
-              <TextSegment
-                index={index}
-                data={dataSegment}
-                colorScale={colorScale}
-              />
+            itemContent={(_, dataSegment) => (
+              <TextSegment data={dataSegment} colorScale={colorScale} />
             )}
             endReached={onEndReached}
             startReached={onStartReached}
@@ -74,9 +67,9 @@ export default function TextView({
           />
         </Allotment.Pane>
 
-        {/* Middle view - parallels for selected segment */}
+        {/* Middle pane - parallels for selected segment */}
         <Allotment.Pane visible={Boolean(selectedSegmentId)}>
-          <TextViewMiddleParallels parallelIds={[]} />
+          <TextViewMiddleParallels />
         </Allotment.Pane>
       </Allotment>
     </Paper>

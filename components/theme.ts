@@ -126,8 +126,8 @@ export const getDesignTokens = ({
           card: "#29262d",
         },
         text: {
-          primary: "#d2cfcf",
-          secondary: "#a8a5a5",
+          primary: grey[100],
+          secondary: grey[300],
           inverted: grey[900],
         },
         divider: "rgba(54,31,13,0.12)",
