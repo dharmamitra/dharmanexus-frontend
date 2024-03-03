@@ -7,16 +7,19 @@ import { useDbView } from "@components/hooks/useDbView";
 import { useSourceFile } from "@components/hooks/useSourceFile";
 import { CenteredProgress } from "@components/layout/CenteredProgress";
 import { PageContainer } from "@components/layout/PageContainer";
-import { Typography } from "@mui/material";
+// import type { NumbersPageData } from "utils/api/numbers";
 import {
   // dehydrate,
+  keepPreviousData,
+  useInfiniteQuery,
   useQuery,
 } from "@tanstack/react-query";
+import NumbersTable from "features/numbersView/NumbersTable";
 import { SourceTextBrowserDrawer } from "features/sourceTextBrowserDrawer/sourceTextBrowserDrawer";
 import merge from "lodash/merge";
-import type { ApiNumbersPageData } from "types/api/common";
-// import { prefetchDbResultsPageData } from "utils/api/apiQueryUtils";
+import type { ApiNumbersPageData, PagedResponse } from "types/api/common";
 import { DbApi } from "utils/api/dbApi";
+import { PagedAPINumbersResponse } from "utils/api/numbers";
 // import type { SourceLanguage } from "utils/constants";
 import { getI18NextStaticProps } from "utils/nextJsHelpers";
 
@@ -27,21 +30,42 @@ export default function NumbersPage() {
   const { isFallback } = useSourceFile();
   useDbView();
 
-  // const { data, isLoading, isError } = useQuery<ApiNumbersPageData>({
-  const { isLoading, isError } = useQuery<ApiNumbersPageData>({
-    queryKey: DbApi.NumbersView.makeQueryKey({ fileName, queryParams }),
-    queryFn: () =>
-      DbApi.NumbersView.call({
-        fileName,
-        queryParams,
-      }),
+  const { data: headerCollections } = useQuery({
+    queryKey: DbApi.NumbersViewCollections.makeQueryKey({
+      fileName,
+      queryParams,
+    }),
+    queryFn: () => DbApi.NumbersViewCollections.call({ fileName, queryParams }),
   });
+
+  const { data, fetchNextPage, isFetchingNextPage, isLoading, isError } =
+    useInfiniteQuery<PagedAPINumbersResponse>({
+      initialPageParam: 0,
+      queryKey: DbApi.NumbersView.makeQueryKey({ fileName, queryParams }),
+      queryFn: ({ pageParam = 0 }) =>
+        DbApi.NumbersView.call({
+          fileName,
+          queryParams,
+          pageNumber: Number(pageParam),
+        }),
+      getNextPageParam: (lastPage) => lastPage.pageNumber + 1,
+      getPreviousPageParam: (lastPage) =>
+        lastPage.pageNumber === 0 ? undefined : lastPage.pageNumber - 1,
+      placeholderData: keepPreviousData,
+    });
+
+  const allFetchedData = React.useMemo(
+    () => (data ? data.pages.flatMap((page) => page.data) : []),
+    [data]
+  );
+
+  const totalDBRowCount = data?.pages[0]?.totalRowCount ?? 0;
 
   if (isError) {
     return <ErrorPage backgroundName={sourceLanguage} />;
   }
 
-  if (isFallback) {
+  if (isFallback || isLoading || !data) {
     return (
       <PageContainer backgroundName={sourceLanguage}>
         <CenteredProgress />
@@ -51,32 +75,21 @@ export default function NumbersPage() {
 
   return (
     <PageContainer
-      maxWidth="xl"
+      maxWidth={false}
       backgroundName={sourceLanguage}
       isQueryResultsPage
     >
       <DbViewPageHead />
 
-      {/* Just printing some example data: */}
-      {/* The deta should probably be transformed according to our needs before using it here. */}
-
-      {isLoading ? (
-        <CenteredProgress />
-      ) : (
-        <>
-          <Typography variant="h1">TODO</Typography>
-          {/* {data?.collections &&
-            data.collections[0].map((collection) => {
-              const [[collectionId, collectionName]] =
-                Object.entries(collection);
-              return (
-                <Typography key={collectionId}>
-                  {collectionId}: {collectionName}
-                </Typography>
-              );
-            })} */}
-        </>
-      )}
+      <NumbersTable
+        collections={headerCollections}
+        data={allFetchedData}
+        fetchNextPage={fetchNextPage}
+        isFetchingNextPage={isFetchingNextPage}
+        isLoading={isLoading}
+        totalDBRowCount={totalDBRowCount}
+        language={sourceLanguage}
+      />
       <SourceTextBrowserDrawer />
     </PageContainer>
   );
@@ -98,6 +111,6 @@ export const getStaticProps: GetStaticProps = async ({
 
   return merge(
     // { props: { dehydratedState: dehydrate(queryClient) } },
-    i18nProps,
+    i18nProps
   );
 };
