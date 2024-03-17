@@ -17,7 +17,6 @@ import {
 import NumbersTable from "features/numbersView/NumbersTable";
 import { SourceTextBrowserDrawer } from "features/sourceTextBrowserDrawer/sourceTextBrowserDrawer";
 import merge from "lodash/merge";
-import type { ApiNumbersPageData, PagedResponse } from "types/api/common";
 import { DbApi } from "utils/api/dbApi";
 import { PagedAPINumbersResponse } from "utils/api/numbers";
 // import type { SourceLanguage } from "utils/constants";
@@ -56,7 +55,7 @@ export default function NumbersPage() {
 
   const allFetchedData = React.useMemo(
     () => (data ? data.pages.flatMap((page) => page.data) : []),
-    [data]
+    [data],
   );
 
   const totalDBRowCount = data?.pages[0]?.totalRowCount ?? 0;
@@ -111,6 +110,6 @@ export const getStaticProps: GetStaticProps = async ({
 
   return merge(
     // { props: { dehydratedState: dehydrate(queryClient) } },
-    i18nProps
+    i18nProps,
   );
 };
