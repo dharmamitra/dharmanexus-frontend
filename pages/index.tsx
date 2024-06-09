@@ -1,5 +1,6 @@
 import React from "react";
 import type { GetStaticProps } from "next";
+import Image from "next/image";
 import { useTranslation } from "next-i18next";
 import { ContentLanguageSelector } from "@components/layout/ContentLanguageSelector";
 import { Footer } from "@components/layout/Footer";
@@ -12,8 +13,22 @@ import Typography from "@mui/material/Typography";
 import { visuallyHidden } from "@mui/utils";
 import { dehydrate, QueryClient } from "@tanstack/react-query";
 import merge from "lodash/merge";
+import { getDeployment } from "utils";
 import { SourceLanguage } from "utils/constants";
 import { getI18NextStaticProps } from "utils/nextJsHelpers";
+
+const logoPaths: Record<Deployment, string> = {
+  dharmamitra: "/assets/logos/dm-logo-flat.png",
+  kumarajiva: "/assets/logos/kp-logo-full.png",
+};
+const logoDimensions: Record<Deployment, { width: number; height: number }> = {
+  dharmamitra: { width: 392, height: 216 },
+  kumarajiva: { width: 392, height: 216 },
+};
+
+const deployment = getDeployment();
+const logoSrc = logoPaths[deployment];
+const logoSize = logoDimensions[deployment];
 
 export default function Home() {
   const { t } = useTranslation();
@@ -23,11 +38,9 @@ export default function Home() {
   return (
     <PageContainer backgroundName="welcome">
       <Box
-        component="img"
-        src="/assets/logos/bn_full_logo.svg"
-        height="30vh"
-        alt="buddhanexus logo"
         sx={{
+          display: "grid",
+          placeItems: "center",
           p: 4,
           [materialTheme.breakpoints.down("sm")]: {
             p: 3,
@@ -38,7 +51,9 @@ export default function Home() {
           borderRadiusTopLeft: 1,
           borderRadiusTopRights: 1,
         }}
-      />
+      >
+        <Image src={logoSrc} alt="logo" {...logoSize} />
+      </Box>
       <Paper
         elevation={1}
         sx={{

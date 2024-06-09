@@ -35,7 +35,7 @@ export const ContentLanguageSelector: FC<Props> = ({ title, href, color }) => {
     >
       <Box
         component="img"
-        src="/assets/logos/bn_tree_only.svg"
+        src="/assets/images/leaf.svg"
         sx={{
           height: 120,
           width: 120,

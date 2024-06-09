@@ -8,12 +8,22 @@
   - common base for all DM deployments
   - `basePath`: `/database`
 - `dm-<XXX>`: developmemt branchs specific to all DM custom instances (exclusively for merging into `dm-core`)
-- `dm-deloy-main`: 
-  - for `dharmamitra.org/database` deployment 
+- `dm-deloy-main`:
+  - for `dharmamitra.org/database` deployment
   - pulls in updates from `dm-core` (only receives)
-- `dm-deloy-kp`: 
+  - `NEXT_PUBLIC_DEPLOYMENT`: dharmamitra
+- `dm-deloy-kp`:
   - for `dharmamitra.org/kumarajiva/database` deployment
   - pulls in updates from `dm-core` (only receives)
+  - `NEXT_PUBLIC_DEPLOYMENT`: kumarajiva
+
+Notes:
+
+- the `getDeployment` function can be used acroos the project for necessary customizatons.
+- as much as makes sense `dm-` branches should favour creating new files (in existing folders) to minimize merge conflicts. New `dm` files that are safe to edit include:
+  - `types/global.d.ts`
+  - `types/index.ts`
+  - `utils/index.ts`
 
 ## Getting Started
 
