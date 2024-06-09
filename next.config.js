@@ -7,7 +7,20 @@ const nextConfig = {
   i18n,
   reactStrictMode: true,
   compiler: { emotion: true },
-  pageExtensions: ["js", "jsx", "ts", "tsx", "md", "mdx"],
+  experimental: {
+    turbo: {
+      resolveExtensions: [
+        ".mdx",
+        ".md",
+        ".tsx",
+        ".ts",
+        ".jsx",
+        ".js",
+        ".mjs",
+        ".json",
+      ],
+    },
+  },
 };
 
 const withMDX = nextMDX({
