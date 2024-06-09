@@ -17,6 +17,14 @@ import Toolbar from "@mui/material/Toolbar";
 import { isNavigationDrawerOpen } from "features/atoms";
 import { GlobalSearchDesktop, GlobalSearchMobile } from "features/globalSearch";
 import { useSetAtom } from "jotai";
+import { getDeployment } from "utils";
+
+const dmLogoPaths: Record<Deployment, string> = {
+  dharmamitra: "/assets/logos/dm-logo-1x1.png",
+  kumarajiva: "/assets/logos/kp-logo-1x1.png",
+};
+
+const logoSrc = dmLogoPaths[getDeployment()];
 
 interface AppBarLinkProps {
   title: string;
@@ -55,9 +63,10 @@ export const AppTopBar = () => {
   }, []);
 
   return (
-    <>
+    <Box bgcolor="background.paper">
       <AppBar
         position="sticky"
+        color="transparent"
         elevation={0}
         sx={{
           zIndex: materialTheme.zIndex.drawer + 1,
@@ -96,7 +105,7 @@ export const AppTopBar = () => {
               >
                 <Box
                   component="img"
-                  src="/assets/logos/bn_tree_only.svg"
+                  src={logoSrc}
                   width={68}
                   sx={{
                     maxHeight: 48,
@@ -172,6 +181,6 @@ export const AppTopBar = () => {
           <GlobalSearchMobile />
         </aside>
       )}
-    </>
+    </Box>
   );
 };
