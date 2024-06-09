@@ -56,9 +56,6 @@ export const PageContainer: FC<Props> = ({
         <Container
           maxWidth={false}
           sx={(theme) => ({
-            background: `url(${BgImageSrcs[backgroundName]})`,
-            backgroundPosition: "center",
-            backgroundSize: BgImageBgSize[backgroundName],
             opacity: 0.05,
             // @ts-expect-error MUI css variable type mismatch
             [theme.getColorSchemeSelector("dark")]: {

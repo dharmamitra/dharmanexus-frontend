@@ -19,12 +19,19 @@ import { GlobalSearchDesktop, GlobalSearchMobile } from "features/globalSearch";
 import { useSetAtom } from "jotai";
 import { getDeployment } from "utils";
 
-const dmLogoPaths: Record<Deployment, string> = {
+const logoSquarePaths: Record<Deployment, string> = {
   dharmamitra: "/assets/logos/dm-logo-1x1.png",
   kumarajiva: "/assets/logos/kp-logo-1x1.png",
 };
 
-const logoSrc = dmLogoPaths[getDeployment()];
+const logoWidePaths: Record<Deployment, string> = {
+  dharmamitra: "/assets/logos/dm-logo-flat.png",
+  kumarajiva: "/assets/logos/kp-logo-full.png",
+};
+
+const deployment = getDeployment();
+const logoSquareSrc = logoSquarePaths[deployment];
+const logoWideSrc = logoWidePaths[deployment];
 
 interface AppBarLinkProps {
   title: string;
@@ -74,7 +81,7 @@ export const AppTopBar = () => {
         }}
         data-testid="app-bar"
       >
-        <Toolbar>
+        <Toolbar sx={{ py: 2 }}>
           <Box
             sx={{
               display: "flex",
@@ -103,26 +110,27 @@ export const AppTopBar = () => {
                   },
                 }}
               >
-                <Box
-                  component="img"
-                  src={logoSrc}
-                  width={68}
-                  sx={{
-                    maxHeight: 48,
-                    minWidth: 48,
-                    [materialTheme.breakpoints.down("sm")]: {
-                      maxHeight: 36,
-                    },
-                  }}
-                  alt="logo"
-                />
-                {!isHomeRoute && (
+                {isHomeRoute ? (
                   <Box
                     component="img"
-                    src="/assets/logos/bn_text_only.svg"
-                    width={144}
+                    src={logoSquareSrc}
+                    width={68}
                     sx={{
-                      maxHeight: 24,
+                      maxHeight: 48,
+                      minWidth: 48,
+                      [materialTheme.breakpoints.down("sm")]: {
+                        maxHeight: 36,
+                      },
+                    }}
+                    alt="logo"
+                  />
+                ) : (
+                  <Box
+                    component="img"
+                    src={logoWideSrc}
+                    // width={144}
+                    sx={{
+                      maxHeight: 80,
                       [materialTheme.breakpoints.down("sm")]: {
                         display: "none",
                       },
