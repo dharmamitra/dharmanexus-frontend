@@ -1,9 +1,9 @@
 const { i18n } = require("./next-i18next.config");
 const nextMDX = require("@next/mdx");
-const path = require("path");
 
 /** @type {import("next").NextConfig} */
 const nextConfig = {
+  basePath: process.env.NODE_ENV === "production" ? "/database" : undefined,
   i18n,
   reactStrictMode: true,
   compiler: { emotion: true },
