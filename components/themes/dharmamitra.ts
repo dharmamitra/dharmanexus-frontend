@@ -9,7 +9,8 @@ import {
   SOURCE_LANG_DARK_COLORS,
 } from "./base";
 
-const defaultPrimary = "#392727";
+const defaultPrimary = "#972e3a";
+const defaultPrimaryBg = "#f2eeee";
 
 export const getDharmamitraDesignTokens = ({
   sourceLanguage,
@@ -24,12 +25,12 @@ export const getDharmamitraDesignTokens = ({
             : defaultPrimary,
         },
         background: {
-          default: "#efe0c2",
+          default: "#f7f7f7",
           paper: "#ffffff",
           accent: grey[50],
           header: sourceLanguage
             ? SOURCE_LANG_COLORS[sourceLanguage]
-            : defaultPrimary,
+            : defaultPrimaryBg,
           card: grey[100],
           inverted: grey[800],
         },

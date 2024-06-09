@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbo",
+    "build:dm": "sh ./scripts/set_env.sh dharmamitra && next build",
+    "build:kp": "sh ./scripts/set_env.sh kumarajiva && next build",
     "build": "next build",
     "build:compile": "next build --experimental-build-mode compile",
     "start": "next start",

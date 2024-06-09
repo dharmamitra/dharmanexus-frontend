@@ -18,11 +18,11 @@ import { SourceLanguage } from "utils/constants";
 import { getI18NextStaticProps } from "utils/nextJsHelpers";
 
 const logoPaths: Record<Deployment, string> = {
-  dharmamitra: "/assets/logos/dm-logo-flat.png",
+  dharmamitra: "/assets/logos/dm-logo-full.png",
   kumarajiva: "/assets/logos/kp-logo-full.png",
 };
 const logoDimensions: Record<Deployment, { width: number; height: number }> = {
-  dharmamitra: { width: 392, height: 216 },
+  dharmamitra: { width: 397, height: 216 },
   kumarajiva: { width: 392, height: 216 },
 };
 
